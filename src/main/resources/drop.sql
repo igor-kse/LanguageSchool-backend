@@ -1,0 +1,14 @@
+drop table if exists grades;
+drop table if exists groups;
+drop table if exists languages;
+drop table if exists language_scales;
+drop table if exists payments;
+drop table if exists scale_levels;
+drop table if exists schedule;
+drop table if exists student_grade;
+drop table if exists student_group;
+drop table if exists students;
+drop table if exists teachers;
+drop table if exists teacher_languages;
+drop table if exists user_roles;
+drop table if exists users;
