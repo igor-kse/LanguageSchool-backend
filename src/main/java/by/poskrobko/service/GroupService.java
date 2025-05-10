@@ -1,8 +1,8 @@
 package by.poskrobko.service;
 
-import by.poskrobko.model.Grade;
+import by.poskrobko.dto.GroupDTO;
+import by.poskrobko.mapper.GroupMapper;
 import by.poskrobko.model.Group;
-import by.poskrobko.model.Teacher;
 import by.poskrobko.repository.GradeRepository;
 import by.poskrobko.repository.GroupRepository;
 import by.poskrobko.repository.StudentGroupDAO;
@@ -16,6 +16,7 @@ import exception.NotExistingEntityException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class GroupService {
 
@@ -24,17 +25,18 @@ public class GroupService {
     private final GradeRepository gradeRepository = new GradeRepositoryImpl();
     private final TeacherRepository teacherRepository = new TeacherRepositoryImpl();
 
-    public void create(String name, Grade grade, Teacher teacher) {
-        Util.assureStringHasLength(name, "group name");
-        Objects.requireNonNull(grade, "grade cannot be null");
-        Objects.requireNonNull(teacher, "teacher cannot be null");
-        Group group = new Group(teacher, name, grade);
-        groupRepository.save(group);
+    private final GroupMapper groupMapper = new GroupMapper();
+
+    public GroupDTO create(GroupDTO group) {
+        String groupId = UUID.randomUUID().toString();
+        Objects.requireNonNull(group.name());
+        groupRepository.save(groupId, group.name(), group.teacher().id(), group.language().name(), group.levelDTO().id());
+        return group;
     }
 
-    public Group findById(String id) {
+    public GroupDTO findById(String id) {
         Util.assureStringHasLength(id, "group id");
-        return groupRepository.findById(id);
+        return groupMapper.toGroupDTO(groupRepository.findById(id));
     }
 
     public List<Group> findAllByTeacher(String id) {
@@ -48,19 +50,32 @@ public class GroupService {
         return null;
     }
 
+    public List<GroupDTO> findAll() {
+        List<Group> groups = groupRepository.findAll();
+        return groupMapper.toGroupDTOs(groups);
+    }
+
     public List<Group> getAllGroups() {
         return groupRepository.findAll();
     }
 
-    public void updateGroup(Group group) {
-        Group existingGroup = groupRepository.findById(group.getId());
+    public void update(GroupDTO group) {
+        Group existingGroup = groupRepository.findById(group.id());
         if (existingGroup == null) {
-            throw new NotExistingEntityException("Group " + group.getId() + " not found");
+            throw new NotExistingEntityException("Group " + group.id() + " not found");
         }
-        groupRepository.update(group);
+        groupRepository.update(group.id(), group.name(), group.teacher().id(), group.language().name(),
+                group.levelDTO().id());
     }
 
-    public void deleteGroup(String id) {
+    public void updateStudents(String groupId, List<String> studentsId) {
+        Objects.requireNonNull(groupId, "Group id must not be null");
+        Objects.requireNonNull(studentsId, "Students id must not be null");
+        groupRepository.deleteStudents(groupId);
+        groupRepository.saveStudents(groupId, studentsId);
+    }
+
+    public void delete(String id) {
         Group group = groupRepository.findById(id);
         if (group == null) {
             throw new NotExistingEntityException("Group " + id + " not found");
@@ -68,15 +83,14 @@ public class GroupService {
         groupRepository.delete(id);
     }
 
-    public void assignTeacher(String teacherId, String groupId) {
-        Group group = groupRepository.findById(groupId);
-        Objects.requireNonNull(group);
-
-        Teacher teacher = this.teacherRepository.findById(teacherId);
-        Objects.requireNonNull(teacher);
-
-        group.setTeacher(teacher);
-        groupRepository.update(group);
-    }
-
+//    public void assignTeacher(String teacherId, String groupId) {
+//        Group group = groupRepository.findById(groupId);
+//        Objects.requireNonNull(group);
+//
+//        Teacher teacher = this.teacherRepository.findById(teacherId);
+//        Objects.requireNonNull(teacher);
+//
+//        group.setTeacher(teacher);
+//        groupRepository.update(group);
+//    }
 }

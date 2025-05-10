@@ -13,13 +13,14 @@ public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements Group
     private final GroupMapper groupMapper = new GroupMapper();
 
     @Override
-    public void save(Group group) {
-        doSave("INSERT INTO groups VALUES (?, ?, ?, ?)",
+    public void save(String groupId, String name, String teacherId, String languageName, String scaleLevelId) {
+        doSave("INSERT INTO groups VALUES (?, ?, ?, ?, ?)",
                 statement -> {
-                    statement.setString(1, group.getId());
-                    statement.setString(2, group.getName());
-                    statement.setString(3, group.getGrade().getId());
-                    statement.setString(4, group.getTeacher().getId());
+                    statement.setString(1, groupId);
+                    statement.setString(2, name);
+                    statement.setString(3, teacherId);
+                    statement.setString(4, languageName);
+                    statement.setString(5, scaleLevelId);
                 });
     }
 
@@ -27,14 +28,17 @@ public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements Group
     public Group findById(String id) {
         return doFindBy(
                 """
-                        SELECT groups.*, languages.*, grades.value, teachers.education, users.user_id, users.firstName, users.lastName, users.email
-                            FROM groups
-                                INNER JOIN grades ON groups.grade_id = grades.grade_id
-                                INNER JOIN languages ON grades.language_name = languages.language_name
-                                INNER JOIN teachers ON groups.teacher_id = teachers.teacher_id
-                                INNER JOIN users ON teachers.teacher_id = users.user_id
-                            WHERE group_id = ?
-                        """,
+                    SELECT g.group_id, g.name, g.teacher_id, g.language_name, g.scale_level_id,
+                       t.education, u.firstname, u.lastname, u.email, u.password,
+                       sl.language_scale_name, sl.scale_level_name, sl.scale_level_id,
+                       ls.language_scale_description
+                    FROM groups g
+                        INNER JOIN teachers t ON g.teacher_id = t.teacher_id
+                        INNER JOIN users u ON t.teacher_id = u.user_id
+                        INNER JOIN scale_levels sl ON g.scale_level_id = sl.scale_level_id
+                        INNER JOIN language_scales ls ON sl.language_scale_name = ls.language_scale_name
+                    WHERE g.group_id = ?
+                    """,
                 statement -> statement.setString(1, id),
                 groupMapper::toGroup);
     }
@@ -72,15 +76,31 @@ public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements Group
     }
 
     @Override
-    public void update(Group group) {
-        String sql = "UPDATE groups SET name = ?, grade_id = ?, teacher_id = ? WHERE group_id = ?";
+    public void update(String groupId, String name, String teacherId, String languageName, String scaleLevelId) {
+        String sql = "UPDATE groups SET name = ?, teacher_id = ?, language_name = ?, scale_level_id = ?" +
+                     "WHERE group_id = ?";
         Settable params = statement -> {
-            statement.setString(1, group.getName());
-            statement.setString(2, group.getGrade().getId());
-            statement.setString(3, group.getTeacher().getId());
-            statement.setString(4, group.getId());
+            statement.setString(1, name);
+            statement.setString(2, teacherId);
+            statement.setString(3, languageName);
+            statement.setString(4, scaleLevelId);
+            statement.setString(5, groupId);
         };
         doUpdate(sql, params);
+    }
+
+    @Override
+    public void saveStudents(String groupId, List<String> studentIds) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO student_group VALUES\n");
+        studentIds.forEach(id -> {
+            sb.append("    ('").append(id).append("', '").append(groupId).append("'),").append("\n");
+        });
+        sb.delete(sb.length() - 2, sb.length());
+        sb.append(";");
+        String sql = sb.toString();
+        System.out.println(sql);
+        doSave(sql, statement -> {});
     }
 
     @Override
@@ -88,15 +108,22 @@ public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements Group
         doDeleteByKey("DELETE FROM groups WHERE group_id = ?", id);
     }
 
+    public void deleteStudents(String groupId) {
+        doDeleteByKey("DELETE FROM student_group WHERE group_id = ?", groupId);
+    }
+
     @Override
     public List<Group> findAll() {
         String sql = """
-                SELECT groups.*, users.*, education
-                FROM groups
-                    INNER JOIN teachers on groups.teacher_id = teachers.teacher_id
-                    INNER JOIN users ON teachers.teacher_id = users.user_id
-                    INNER JOIN languages ON groups.language_name = languages.language_name
-                WHERE group_id = 'group_uuid_1'
+                SELECT g.group_id, g.name, g.teacher_id, g.language_name, g.scale_level_id,
+                       t.education, u.firstname, u.lastname, u.email, u.password,
+                       sl.language_scale_name, sl.scale_level_name, sl.scale_level_id,
+                       ls.language_scale_description
+                    FROM groups g
+                        INNER JOIN teachers t ON g.teacher_id = t.teacher_id
+                        INNER JOIN users u ON t.teacher_id = u.user_id
+                        INNER JOIN scale_levels sl ON g.scale_level_id = sl.scale_level_id
+                        INNER JOIN language_scales ls ON sl.language_scale_name = ls.language_scale_name
                 """;
         return doFindAll(sql, groupMapper::toGroups);
     }

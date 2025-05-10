@@ -18,9 +18,17 @@ public class StudentsController extends BaseController {
 
         handleRequest(exchange, () -> {
             StudentsAction action = StudentsAction.resolve(path, HttpMethod.valueOf(method));
+            System.out.println(action);
             switch (action) {
                 case GET_ALL_STUDENTS -> {
-                    List<StudentDTO> students = studentService.getAllStudents();
+                    String query = exchange.getRequestURI().getQuery();
+                    List<StudentDTO> students;
+                    if (query != null && query.startsWith("group=")) {
+                        String group = query.substring("group=".length());
+                        students = studentService.getAllStudents(group);
+                    } else {
+                        students = studentService.getAllStudents();
+                    }
                     sendJson(exchange, 200, students);
                 }
                 case POST_ADD_STUDENT -> {
@@ -45,6 +53,7 @@ public class StudentsController extends BaseController {
 
     private enum StudentsAction {
         GET_ALL_STUDENTS(Pattern.compile("/students"), HttpMethod.GET),
+        GET_ALL_STUDENTS_OF_GROUP(Pattern.compile("/students?group=[\\w-]+"), HttpMethod.GET),
         POST_ADD_STUDENT(Pattern.compile("/students"), HttpMethod.POST),
         PATCH_UPDATE_STUDENT(Pattern.compile("/students"), HttpMethod.PUT),
         DELETE_STUDENT(Pattern.compile("/students/[\\w-]+"), HttpMethod.DELETE),

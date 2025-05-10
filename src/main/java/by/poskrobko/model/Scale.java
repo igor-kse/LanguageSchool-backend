@@ -3,12 +3,12 @@ package by.poskrobko.model;
 import java.util.Objects;
 import java.util.Set;
 
-public class LanguageScale {
+public class Scale {
     private String name;
     private String description;
     private Set<Level> levels;
 
-    public LanguageScale(String name, String description, Set<Level> levels) {
+    public Scale(String name, String description, Set<Level> levels) {
         this.description = description;
         this.name = name;
         this.levels = levels;
@@ -42,7 +42,7 @@ public class LanguageScale {
     public final boolean equals(Object o) {
 
         if (this == o) return true;
-        if (!(o instanceof LanguageScale that)) return false;
+        if (!(o instanceof Scale that)) return false;
 
         return Objects.equals(name, that.name) && Objects.equals(description, that.description);
     }

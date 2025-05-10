@@ -8,7 +8,7 @@ import by.poskrobko.repository.StudentRepository;
 import java.util.List;
 
 public class StudentRepositoryImpl extends AbstractBaseDAO<Student> implements StudentRepository {
-    private StudentMapper mapper = new StudentMapper();
+    private final StudentMapper mapper = new StudentMapper();
 
     @Override
     public void delete(String id) {
@@ -42,11 +42,35 @@ public class StudentRepositoryImpl extends AbstractBaseDAO<Student> implements S
 
     @Override
     public List<Student> getAllStudents() {
-        return doFindAll("SELECT " +
-                             "    st.student_id, age, hobbies, channel, note, " +
-                             "    firstname, lastname, email, avatar " +
-                             "FROM students st" +
-                             "    LEFT JOIN users u ON st.student_id = u.user_id "
-                , mapper::toStudents);
+        return sqlExecutor.execute(connection -> {
+            String sql =
+                    """
+                    SELECT
+                        st.student_id, age, hobbies, channel, note,
+                        firstname, lastname, email, avatar
+                        FROM students st
+                        LEFT JOIN users u ON st.student_id = u.user_id
+                    """;
+            var statement = connection.prepareStatement(sql);
+            return mapper.toStudents(statement.executeQuery());
+        });
+    }
+
+    @Override
+    public List<Student> getAllStudents(String groupId) {
+        return sqlExecutor.execute(connection -> {
+            String sql = """
+                    SELECT
+                        st.student_id, age, hobbies, channel, note,
+                        firstname, lastname, email, avatar
+                    FROM students st
+                        INNER JOIN users u ON st.student_id = u.user_id
+                        INNER JOIN student_group sg ON st.student_id = sg.student_id
+                    WHERE  group_id = ?
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, groupId);
+            return mapper.toStudents(statement.executeQuery());
+        });
     }
 }

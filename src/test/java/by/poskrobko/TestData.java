@@ -11,10 +11,10 @@ import java.util.Set;
 
 public class TestData {
 
-    public static final Language ENGLISH = new Language("English", "", "");
-    public static final Language PORTUGUESE = new Language("Portuguese", "", "");
-    public static final Language ITALIAN = new Language("Italian", "", "");
-    public static final Language FRENCH = new Language("French", "", "");
+    public static final Language ENGLISH = new Language("English", "", new Scale("", "", Set.of()));
+    public static final Language PORTUGUESE = new Language("Portuguese", "", new Scale("", "", Set.of()));
+    public static final Language ITALIAN = new Language("Italian", "", new Scale("", "", Set.of()));
+    public static final Language FRENCH = new Language("French", "", new Scale("", "", Set.of()));
 
     public static final String GRADE_UUID_ENGLISH_A1 = "grade_uuid1";
     public static final String GRADE_UUID_ENGLISH_A2 = "grade_uuid2";

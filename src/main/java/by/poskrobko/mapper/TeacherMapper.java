@@ -10,8 +10,6 @@ import java.util.*;
 
 public class TeacherMapper extends BaseMapper<Teacher> {
 
-    private static final UserMapper userMapper = new UserMapper();
-
     private Map<String, Teacher> mapMultiple(ResultSet resultSet) {
         Map<String, Teacher> teachers = new HashMap<>();
 
@@ -46,7 +44,7 @@ public class TeacherMapper extends BaseMapper<Teacher> {
         return null;
     }
 
-    public Teacher toTeacher(ResultSet resultSet) {
+    public Teacher toTeacherMultipleRow(ResultSet resultSet) {
         Map<String, Teacher> teachers = mapMultiple(resultSet);
         if (teachers == null) {
             return null;
@@ -59,6 +57,19 @@ public class TeacherMapper extends BaseMapper<Teacher> {
                 : null;
     }
 
+    public Teacher toTeacherWithoutLanguages(ResultSet resultSet) {
+        return map(resultSet, rs -> {
+            String id = resultSet.getString("teacher_id");
+            String firstName = resultSet.getString("firstname");
+            String lastName = resultSet.getString("lastname");
+            String email = resultSet.getString("email");
+            var user = new User(id, firstName, lastName, email, "", Collections.emptySet(), null);
+
+            String education = resultSet.getString("education");
+            return new Teacher(user, education, Set.of());
+        });
+    }
+
     public List<Teacher> toTeachers(ResultSet resultSet) {
         Map<String, Teacher> teachers = mapMultiple(resultSet);
         if (teachers == null) {
@@ -67,7 +78,7 @@ public class TeacherMapper extends BaseMapper<Teacher> {
         return teachers.values().stream().toList();
     }
 
-    public Teacher toTeacher(TeacherDTO dto) {
+    public Teacher toTeacherMultipleRow(TeacherDTO dto) {
         var user = new User(dto.id(), dto.firstName(), dto.lastName(), dto.email(), "", Set.of(), null);
         return new Teacher(user, dto.education(), dto.languages());
     }
@@ -88,5 +99,17 @@ public class TeacherMapper extends BaseMapper<Teacher> {
             teacherDTOs.add(toTeacherDTO(teacher));
         }
         return teacherDTOs;
+    }
+
+    public Teacher toTeacherWithNoLanguages(ResultSet resultSet) {
+        return map(resultSet, rs -> {
+            String id = rs.getString("teacher_id");
+            String firstName = rs.getString("first_name");
+            String lastName = rs.getString("last_name");
+            String email = rs.getString("email");
+            String education = rs.getString("education");
+            User user = new User(id, firstName, lastName, email, "", Collections.emptySet(), null);
+            return new Teacher(user, education, Collections.emptySet());
+        });
     }
 }

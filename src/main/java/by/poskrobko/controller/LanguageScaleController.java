@@ -1,10 +1,12 @@
 package by.poskrobko.controller;
 
-import by.poskrobko.dto.LanguageScaleDTO;
+import by.poskrobko.dto.ScaleDTO;
 import by.poskrobko.service.LanguageScaleService;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -23,24 +25,25 @@ public class LanguageScaleController extends BaseController {
                 case GET_SCALE_BY_NAME -> {
                     System.out.println("Get language scale by name: " + action);
                     String name = path.substring("/scales/".length());
-                    LanguageScaleDTO dto = languageScaleService.findByName(name);
+                    ScaleDTO dto = languageScaleService.findByName(name);
                     sendJson(exchange, 200, dto);
                 }
                 case GET_ALL_SCALES -> {
                     System.out.println("Get all language scales: " + action);
-                    List<LanguageScaleDTO> dtoList = languageScaleService.findAll();
+                    List<ScaleDTO> dtoList = languageScaleService.findAll();
                     sendJson(exchange, 200, dtoList);
                 }
                 case POST_ADD_NEW_SCALE -> {
                     System.out.println("Post add a new language scale: " + action);
-                    LanguageScaleDTO dto = jsonMapper.readValue(exchange.getRequestBody(), LanguageScaleDTO.class);
-                    LanguageScaleDTO savedScale = languageScaleService.save(dto);
+                    ScaleDTO dto = jsonMapper.readValue(exchange.getRequestBody(), ScaleDTO.class);
+                    ScaleDTO savedScale = languageScaleService.save(dto);
                     sendJson(exchange, 201, savedScale);
                 }
                 case PUT_UPDATE_SCALE -> {
                     System.out.println("Put update language scale: " + action);
-                    LanguageScaleDTO dto = jsonMapper.readValue(exchange.getRequestBody(), LanguageScaleDTO.class);
-                    languageScaleService.update(dto);
+                    ScaleDTO dto = jsonMapper.readValue(exchange.getRequestBody(), ScaleDTO.class);
+                    String oldName = URLDecoder.decode(path.substring("/scales/".length()), StandardCharsets.UTF_8);
+                    languageScaleService.update(oldName, dto);
                     sendNoContent(exchange);
                 }
                 case DELETE_SCALE -> {
@@ -54,11 +57,11 @@ public class LanguageScaleController extends BaseController {
     }
 
     private enum LanguageScaleAction {
-        GET_SCALE_BY_NAME(Pattern.compile("/scales/[\\w-]+"), HttpMethod.GET),
+        GET_SCALE_BY_NAME(Pattern.compile("/scales/[\\wа-яА-ЯёЁ-]+"), HttpMethod.GET),
         GET_ALL_SCALES(Pattern.compile("/scales"), HttpMethod.GET),
         POST_ADD_NEW_SCALE(Pattern.compile("/scales"), HttpMethod.POST),
-        PUT_UPDATE_SCALE(Pattern.compile("/scales"), HttpMethod.PUT),
-        DELETE_SCALE(Pattern.compile("/scales/[\\w-]+"), HttpMethod.DELETE),
+        PUT_UPDATE_SCALE(Pattern.compile("/scales/[^/]+"), HttpMethod.PUT),
+        DELETE_SCALE(Pattern.compile("/scales/[\\wа-яА-ЯёЁ-]+"), HttpMethod.DELETE),
 
         DEFAULT(Pattern.compile(""), HttpMethod.DEFAULT);
 

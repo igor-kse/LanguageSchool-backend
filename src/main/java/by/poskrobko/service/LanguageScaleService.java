@@ -1,8 +1,8 @@
 package by.poskrobko.service;
 
-import by.poskrobko.dto.LanguageScaleDTO;
-import by.poskrobko.mapper.LanguageScalesMapper;
-import by.poskrobko.model.LanguageScale;
+import by.poskrobko.dto.ScaleDTO;
+import by.poskrobko.mapper.ScaleMapper;
+import by.poskrobko.model.Scale;
 import by.poskrobko.repository.LanguageScalesRepository;
 import by.poskrobko.repository.impl.LanguageScalesRepositoryImpl;
 import exception.ExistingEntityException;
@@ -13,42 +13,43 @@ import java.util.List;
 public class LanguageScaleService {
 
     private final LanguageScalesRepository languageScalesRepository = new LanguageScalesRepositoryImpl();
-    private final LanguageScalesMapper languageScalesMapper = new LanguageScalesMapper();
+    private final ScaleMapper scaleMapper = new ScaleMapper();
 
-    public LanguageScaleDTO save(LanguageScaleDTO dto) {
+    public ScaleDTO save(ScaleDTO dto) {
         if (dto.name().trim().isEmpty()) {
             throw new IllegalArgumentException("Language scale name cannot be empty");
         }
 
-        LanguageScale scale = languageScalesRepository.findByName(dto.name());
+        Scale scale = languageScalesRepository.findByName(dto.name());
         if (scale != null) {
             throw new ExistingEntityException("Language scale" + dto.name() + " already exists");
         }
-        scale = languageScalesMapper.toLanguageScale(dto);
+        scale = scaleMapper.toScale(dto);
         languageScalesRepository.save(scale);
-        return languageScalesMapper.toLanguageScaleDTO(scale);
+        return scaleMapper.toScaleDTO(scale);
     }
 
-    public LanguageScaleDTO findByName(String name) {
-        LanguageScale scale = languageScalesRepository.findByName(name);
+    public ScaleDTO findByName(String name) {
+        Scale scale = languageScalesRepository.findByName(name);
         if (scale == null) {
             throw new NotExistingEntityException("Language scale" + name + " does not exist");
         }
-        return languageScalesMapper.toLanguageScaleDTO(scale);
+        return scaleMapper.toScaleDTO(scale);
     }
 
-    public void update(LanguageScaleDTO scale) {
-        if (scale.name() == null || scale.name().trim().isEmpty()) {
+    public void update(String oldName, ScaleDTO scaleDTO) {
+        if (scaleDTO.name() == null || scaleDTO.name().trim().isEmpty()) {
             throw new IllegalArgumentException("Language scale name cannot be empty");
         }
-        if (scale.levels() == null || scale.levels().isEmpty()) {
+        if (scaleDTO.levels() == null || scaleDTO.levels().isEmpty()) {
             throw new IllegalArgumentException("Language scale levels cannot be empty");
         }
-        languageScalesRepository.update(languageScalesMapper.toLanguageScale(scale));
+        Scale scale = scaleMapper.toScale(scaleDTO);
+        languageScalesRepository.update(oldName, scale);
     }
 
-    public List<LanguageScaleDTO> findAll() {
-        return languageScalesMapper.toLanguageScaleDTO(languageScalesRepository.getAll());
+    public List<ScaleDTO> findAll() {
+        return scaleMapper.toScaleDTO(languageScalesRepository.findAll());
     }
 
     public void delete(String name) {

@@ -1,5 +1,6 @@
 package by.poskrobko.controller;
 
+import by.poskrobko.dto.LanguageDTO;
 import by.poskrobko.dto.LanguageEntryDTO;
 import by.poskrobko.service.LanguageService;
 import com.sun.net.httpserver.HttpExchange;
@@ -23,12 +24,17 @@ public class LanguageController extends BaseController {
                 case GET_LANGUAGE_BY_NAME -> {
                     System.out.println("Get language by name: " + action);
                     String name = path.substring("/languages/".length());
-                    LanguageEntryDTO languageDTO = languageService.findByName(name);
+                    LanguageDTO languageDTO = languageService.findByName(name);
                     sendJson(exchange, 200, languageDTO);
                 }
                 case GET_ALL_LANGUAGES -> {
                     System.out.println("Get all languages " + action);
                     List<LanguageEntryDTO> languageDTOs = languageService.findAll();
+                    sendJson(exchange, 200, languageDTOs);
+                }
+                case GET_ALL_LANGUAGES_WITH_SCALES -> {
+                    System.out.println("Get all languages with scales " + action);
+                    List<LanguageDTO> languageDTOs = languageService.findAllWithScales();
                     sendJson(exchange, 200, languageDTOs);
                 }
                 case POST_ADD_LANGUAGE -> {
@@ -54,11 +60,12 @@ public class LanguageController extends BaseController {
     }
 
     private enum LanguageAction {
-        GET_LANGUAGE_BY_NAME(Pattern.compile("/languages/[\\w-]+"), HttpMethod.GET),
+        GET_LANGUAGE_BY_NAME(Pattern.compile("/languages/[\\wа-яА-ЯёЁ-]+"), HttpMethod.GET),
         GET_ALL_LANGUAGES(Pattern.compile("/languages"), HttpMethod.GET),
+        GET_ALL_LANGUAGES_WITH_SCALES(Pattern.compile("/languages-scales"), HttpMethod.GET),
         POST_ADD_LANGUAGE(Pattern.compile("/languages"), HttpMethod.POST),
         PUT_UPDATE_LANGUAGE(Pattern.compile("/languages"), HttpMethod.PUT),
-        DELETE_LANGUAGE(Pattern.compile("/languages/[\\w-]+"), HttpMethod.DELETE),
+        DELETE_LANGUAGE(Pattern.compile("/languages/[\\wа-яА-ЯёЁ-]+"), HttpMethod.DELETE),
 
         DEFAULT(Pattern.compile(""), HttpMethod.GET);
 

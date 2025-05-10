@@ -1,18 +1,18 @@
 package by.poskrobko.repository;
 
-import by.poskrobko.model.LanguageScale;
+import by.poskrobko.model.Scale;
 
 import java.util.List;
 
 public interface LanguageScalesRepository {
 
-    LanguageScale findByName(String name);
+    Scale findByName(String name);
 
-    void save(LanguageScale languageScale);
+    void save(Scale scale);
 
-    void update(LanguageScale languageScale);
+    void update(String oldName, Scale scale);
 
     void delete(String name);
 
-    List<LanguageScale> getAll();
+    List<Scale> findAll();
 }

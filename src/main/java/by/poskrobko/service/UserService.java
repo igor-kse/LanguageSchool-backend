@@ -7,9 +7,11 @@ import by.poskrobko.mapper.UserMapper;
 import by.poskrobko.model.Role;
 import by.poskrobko.model.Teacher;
 import by.poskrobko.model.User;
+import by.poskrobko.repository.StudentRepository;
 import by.poskrobko.repository.TeacherRepository;
 import by.poskrobko.repository.UserRepository;
 import by.poskrobko.repository.UserRoleDao;
+import by.poskrobko.repository.impl.StudentRepositoryImpl;
 import by.poskrobko.repository.impl.TeacherRepositoryImpl;
 import by.poskrobko.repository.impl.UserRepositoryImpl;
 import by.poskrobko.repository.impl.UserRoleDaoImpl;
@@ -22,6 +24,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository = new UserRepositoryImpl();
     private final TeacherRepository teacherRepository = new TeacherRepositoryImpl();
+    private final StudentRepository studentRepository = new StudentRepositoryImpl();
     private final UserRoleDao userRoleDAO = new UserRoleDaoImpl();
     private final UserMapper userMapper = new UserMapper();
 
@@ -85,5 +88,7 @@ public class UserService {
 
     public void delete(String id) {
         userRepository.delete(id);
+        studentRepository.delete(id);
+        teacherRepository.delete(id);
     }
 }

@@ -31,7 +31,7 @@ public class TeacherRepositoryImpl extends AbstractBaseDAO<Teacher> implements T
                         WHERE user_id = ?;
                         """,
                 statement -> statement.setString(1, id),
-                teacherMapper::toTeacher);
+                teacherMapper::toTeacherMultipleRow);
     }
 
     @Override

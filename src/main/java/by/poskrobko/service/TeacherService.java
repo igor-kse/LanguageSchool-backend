@@ -43,7 +43,7 @@ public class TeacherService {
     }
 
     public void update(TeacherDTO teacherDTO) {
-        teacherRepository.update(teacherMapper.toTeacher(teacherDTO));
+        teacherRepository.update(teacherMapper.toTeacherMultipleRow(teacherDTO));
     }
 
     public List<Group> getTeacherGroups(String teacherId) {

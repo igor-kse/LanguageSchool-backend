@@ -50,6 +50,11 @@ public class StudentService {
         return studentMapper.toStudents(studentRepository.getAllStudents());
     }
 
+    public List<StudentDTO> getAllStudents(String groupId) {
+        var students = studentRepository.getAllStudents(groupId);
+        return studentMapper.toStudents(students);
+    }
+
     public StudentDTO save(StudentDTO dto) {
         User user;
         if (dto.id() == null) {

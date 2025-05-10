@@ -6,29 +6,39 @@ import java.util.UUID;
 public class Group {
     private final String id;
     private String name;
-    private Grade grade;
+    private Language language;
     private Teacher teacher;
+    private Scale scale;
+    private Scale.Level scaleLevel;
 
-    public Group(String id, String name, Grade grade, Teacher teacher) {
+    public Group(String id, String name, Language language, Scale scale, Scale.Level scaleLevel, Teacher teacher) {
         this.id = id;
+        this.language = language;
         this.name = name;
-        this.grade = grade;
+        this.scale = scale;
+        this.scaleLevel = scaleLevel;
         this.teacher = teacher;
     }
 
-    public Group(Teacher teacher, String name, Grade grade) {
+    public Group(String name, Language language, Scale scale, Scale.Level scaleLevel, Teacher teacher) {
         this.id = UUID.randomUUID().toString();
+        this.language = language;
         this.name = name;
-        this.grade = grade;
+        this.scale = scale;
+        this.scaleLevel = scaleLevel;
         this.teacher = teacher;
     }
 
-    public Grade getGrade() {
-        return grade;
+    public String getId() {
+        return id;
     }
 
-    public void setGrade(Grade grade) {
-        this.grade = grade;
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     public String getName() {
@@ -39,8 +49,20 @@ public class Group {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public Scale getScale() {
+        return scale;
+    }
+
+    public void setScale(Scale scale) {
+        this.scale = scale;
+    }
+
+    public Scale.Level getScaleLevel() {
+        return scaleLevel;
+    }
+
+    public void setScaleLevel(Scale.Level scaleLevel) {
+        this.scaleLevel = scaleLevel;
     }
 
     public Teacher getTeacher() {
@@ -56,21 +78,31 @@ public class Group {
         if (this == o) return true;
         if (!(o instanceof Group group)) return false;
 
-        return Objects.equals(id, group.id);
+        return Objects.equals(id, group.id) && Objects.equals(name, group.name)
+                && Objects.equals(language, group.language) && Objects.equals(teacher, group.teacher)
+                && Objects.equals(scale, group.scale) && Objects.equals(scaleLevel, group.scaleLevel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(language);
+        result = 31 * result + Objects.hashCode(teacher);
+        result = 31 * result + Objects.hashCode(scale);
+        result = 31 * result + Objects.hashCode(scaleLevel);
+        return result;
     }
 
     @Override
     public String toString() {
         return "Group{" +
-                "grade=" + grade +
-                ", id='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", language=" + language +
                 ", teacher=" + teacher +
+                ", scale=" + scale +
+                ", scaleLevel=" + scaleLevel +
                 '}';
     }
 }

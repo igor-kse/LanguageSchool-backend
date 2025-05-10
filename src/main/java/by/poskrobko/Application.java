@@ -23,7 +23,9 @@ public class Application {
         server.createContext("/languages", new LanguageController());
         server.createContext("/teachers", new TeacherController());
         server.createContext("/students", new StudentsController());
+        server.createContext("/schedule", new ScheduleController());
         server.createContext("/scales", new LanguageScaleController());
+        server.createContext("/groups", new GroupController());
         server.createContext("/auth/login", new AuthController());
 
         server.setExecutor(Executors.newFixedThreadPool(THREAD_POOL));

@@ -86,10 +86,11 @@ CREATE TABLE IF NOT EXISTS groups
 (
     group_id   TEXT PRIMARY KEY,
     name       text NOT NULL,
-    grade_id   TEXT NOT NULL,
     teacher_id TEXT,
-    language_id TEXT,
-    FOREIGN KEY (language_id) REFERENCES languages (language_name),
+    language_name TEXT,
+    scale_level_id TEXT,
+    FOREIGN KEY (scale_level_id) REFERENCES scale_levels(scale_level_id),
+    FOREIGN KEY (language_name) REFERENCES languages (language_name),
     FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id)
 );
 
