@@ -24,6 +24,7 @@ public class Application {
         server.createContext("/teachers", new TeacherController());
         server.createContext("/students", new StudentsController());
         server.createContext("/schedule", new ScheduleController());
+        server.createContext("/payments", new PaymentController());
         server.createContext("/scales", new LanguageScaleController());
         server.createContext("/groups", new GroupController());
         server.createContext("/auth/login", new AuthController());

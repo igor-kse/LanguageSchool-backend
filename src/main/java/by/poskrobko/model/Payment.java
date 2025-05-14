@@ -2,6 +2,7 @@ package by.poskrobko.model;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Payment {
     private String id;
@@ -19,6 +20,7 @@ public class Payment {
     }
 
     public Payment(LocalDate date, User user, long amount, String description) {
+        this.id = UUID.randomUUID().toString();
         this.date = date;
         this.amount = amount;
         this.user = user;

@@ -11,10 +11,10 @@ import java.util.Set;
 
 public class TestData {
 
-    public static final Language ENGLISH = new Language("English", "", new Scale("", "", Set.of()));
-    public static final Language PORTUGUESE = new Language("Portuguese", "", new Scale("", "", Set.of()));
-    public static final Language ITALIAN = new Language("Italian", "", new Scale("", "", Set.of()));
-    public static final Language FRENCH = new Language("French", "", new Scale("", "", Set.of()));
+    public static final Language ENGLISH = new Language("English", "", "");
+    public static final Language PORTUGUESE = new Language("Portuguese", "", "");
+    public static final Language ITALIAN = new Language("Italian", "", "");
+    public static final Language FRENCH = new Language("French", "", "");
 
     public static final String GRADE_UUID_ENGLISH_A1 = "grade_uuid1";
     public static final String GRADE_UUID_ENGLISH_A2 = "grade_uuid2";
@@ -47,8 +47,8 @@ public class TestData {
     public static final String GROUP_UUID_2 = "group_uuid_2";
     public static final String GROUP_NAME_1 = "group_name_1";
     public static final String GROUP_NAME_2 = "group_name_2";
-    public static final Group GROUP_1 = new Group(GROUP_UUID_1, GROUP_NAME_1, GRADE_ENGLISH_A1, TEACHER);
-    public static final Group GROUP_2 = new Group(GROUP_UUID_2, GROUP_NAME_2, GRADE_ENGLISH_A2, TEACHER);
+    public static final Group GROUP_1 = new Group(GROUP_UUID_1, GROUP_NAME_1, ENGLISH, new Scale("", "", Set.of()), new Scale.Level("", ""), TEACHER);
+    public static final Group GROUP_2 = new Group(GROUP_UUID_2, GROUP_NAME_2, ENGLISH, new Scale("", "", Set.of()), new Scale.Level("", ""), TEACHER);
 
     public static final StudentGroup USER_3_GROUP_1 = new StudentGroup(USER_UUID_3, GROUP_UUID_1);
     public static final StudentGroup USER_4_GROUP_1 = new StudentGroup(USER_UUID_4, GROUP_UUID_1);

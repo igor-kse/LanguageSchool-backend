@@ -1,5 +1,6 @@
 package by.poskrobko.service;
 
+import by.poskrobko.dto.PaymentDTO;
 import by.poskrobko.model.Payment;
 import by.poskrobko.model.User;
 import by.poskrobko.repository.PaymentRepository;
@@ -16,7 +17,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository = new PaymentRepositoryImpl();
     private final UserRepository userRepository = new UserRepositoryImpl();
 
-    public void add(String userId, double amount, LocalDate date, String description) {
+    public String add(String userId, long amount, LocalDate date, String description) {
         Objects.requireNonNull(userId);
         Objects.requireNonNull(date);
         if (amount <= 0) {
@@ -26,10 +27,31 @@ public class PaymentService {
         if (user == null) {
             throw new NotExistingEntityException("User " + userId + " not found");
         }
-        double roundedAmount = Math.round(amount * 100) / 100.0;
-        long convertedAmount = Math.round(roundedAmount * 100);
-        Payment payment = new Payment(date, user, convertedAmount, description);
+        Payment payment = new Payment(date, user, amount, description);
         paymentRepository.save(payment);
+        return payment.getId();
+    }
+
+    public void update(PaymentDTO dto) {
+        Objects.requireNonNull(dto);
+        Objects.requireNonNull(dto.id());
+        if (dto.amount() <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+        paymentRepository.update(dto.id(), dto.user(), dto.amount(), dto.date(), dto.description());
+    }
+
+    public void delete(String id) {
+        Objects.requireNonNull(id);
+        paymentRepository.delete(id);
+    }
+
+    public List<PaymentDTO> getAll() {
+        return paymentRepository.findAll();
+    }
+
+    public PaymentDTO getById(String id) {
+        return paymentRepository.findById(id);
     }
 
     public List<Payment> getPaymentsByUser(String userId) {
