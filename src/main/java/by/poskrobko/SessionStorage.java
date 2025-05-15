@@ -1,11 +1,16 @@
 package by.poskrobko;
 
+import by.poskrobko.dto.UserDTO;
+import by.poskrobko.service.UserService;
+
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SessionStorage {
-    private static int SESSION_TTL_SECONDS = ApplicationConfig.getInt("session.ttl.seconds");
+    private static final int SESSION_TTL_SECONDS = ApplicationConfig.getInt("session.ttl.seconds");
+
+    private static final UserService userService = new UserService();
 
     private static final Map<String, SessionInfo> sessions = new HashMap<>();
 
@@ -23,6 +28,14 @@ public class SessionStorage {
             return null;
         }
         return info.userId;
+    }
+
+    public static UserDTO getUser(String sessionId) {
+        String userId = getUserId(sessionId);
+        if (userId != null) {
+            return userService.findById(userId);
+        }
+        return null;
     }
 
     public static void removeSession(String sessionId) {

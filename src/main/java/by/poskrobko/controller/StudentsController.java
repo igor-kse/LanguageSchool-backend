@@ -13,6 +13,7 @@ public class StudentsController extends BaseController {
 
     @Override
     public void handle(HttpExchange exchange) {
+        super.handle(exchange);
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 

@@ -51,6 +51,45 @@ public class ScheduleRepositoryImpl extends AbstractBaseDAO<Schedule> implements
     }
 
     @Override
+    public List<ScheduleDTO> findAllByTeacher(String teacherId) {
+        return sqlExecutor.execute(connection -> {
+            String sql = """
+                    SELECT schedule_id, g.name, g.language_name, u.firstName, u.lastName, s.language_scale_name,
+                           s.scale_level_name, sch.dayOfWeek, startTime, endTime
+                    FROM schedule sch
+                        INNER JOIN groups g ON sch.group_id = g.group_id
+                        INNER JOIN users u ON g.teacher_id = u.user_id
+                        INNER JOIN scale_levels s ON g.scale_level_id = s.scale_level_id
+                    WHERE teacher_id = ?
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, teacherId);
+            var resultSet = statement.executeQuery();
+            return scheduleMapper.toScheduleDTOs(resultSet);
+        });
+    }
+
+    @Override
+    public List<ScheduleDTO> findAllByStudent(String studentId) {
+        return sqlExecutor.execute(connection -> {
+            String sql = """
+                    SELECT schedule_id, g.name, g.language_name, u.firstName, u.lastName, s.language_scale_name,
+                           s.scale_level_name, sch.dayOfWeek, startTime, endTime
+                    FROM schedule sch
+                             INNER JOIN groups g ON sch.group_id = g.group_id
+                             INNER JOIN users u ON g.teacher_id = u.user_id
+                             INNER JOIN scale_levels s ON g.scale_level_id = s.scale_level_id
+                             INNER JOIN student_group sg on g.group_id = sg.group_id
+                    WHERE student_id = ?
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, studentId);
+            var resultSet = statement.executeQuery();
+            return scheduleMapper.toScheduleDTOs(resultSet);
+        });
+    }
+
+    @Override
     public ScheduleDTO findById(String id) {
         return sqlExecutor.execute(connection -> {
             String sql = """

@@ -17,7 +17,8 @@ public class AuthController extends BaseController {
     private final String AUTH_LOGIN_PATH = "/auth/login";
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
+        super.handle(exchange);
         handleRequest(exchange, () -> {
             String path = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod();

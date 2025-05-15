@@ -15,7 +15,8 @@ public class PaymentController extends BaseController {
     private final PaymentService paymentService = new PaymentService();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
+        super.handle(exchange);
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 

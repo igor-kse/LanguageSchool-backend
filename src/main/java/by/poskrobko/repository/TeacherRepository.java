@@ -1,5 +1,6 @@
 package by.poskrobko.repository;
 
+import by.poskrobko.dto.ScheduleDTO;
 import by.poskrobko.model.Teacher;
 
 import java.util.List;

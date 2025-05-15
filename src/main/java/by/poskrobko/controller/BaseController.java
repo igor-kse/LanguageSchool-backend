@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 
 public abstract class BaseController implements HttpHandler {
 
@@ -25,6 +26,18 @@ public abstract class BaseController implements HttpHandler {
                 .build()
                 .registerModule(new JavaTimeModule());
 
+    private String cookie = "";
+
+    @Override
+    public void handle(HttpExchange exchange) {
+        try {
+            var cookies = exchange.getRequestHeaders().get("SESSIONID");
+            cookie = cookies != null && !cookies.isEmpty() ? cookies.getFirst() : "";
+            System.out.println("Request id: " + cookie);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void handleRequest(HttpExchange exchange, HttpExchangeProcessable processor) {
         try {
@@ -71,5 +84,9 @@ public abstract class BaseController implements HttpHandler {
 
     protected interface HttpExchangeProcessable {
         void process() throws IOException;
+    }
+
+    protected String getCookie() {
+        return cookie;
     }
 }

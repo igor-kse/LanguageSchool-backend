@@ -16,6 +16,14 @@ public class ScheduleService {
         return scheduleRepository.findAll();
     }
 
+    public List<ScheduleDTO> findByTeacher(String teacherId) {
+        return scheduleRepository.findAllByTeacher(teacherId);
+    }
+
+    public List<ScheduleDTO> findByStudent(String studentId) {
+        return scheduleRepository.findAllByStudent(studentId);
+    }
+
     public ScheduleDTO create(ScheduleToPost dto) {
         Objects.requireNonNull(dto);
         String id = UUID.randomUUID().toString();

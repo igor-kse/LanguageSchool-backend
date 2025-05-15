@@ -1,11 +1,14 @@
 package by.poskrobko.controller;
 
+import by.poskrobko.SessionStorage;
 import by.poskrobko.dto.ScheduleDTO;
 import by.poskrobko.dto.ScheduleToPost;
+import by.poskrobko.dto.UserDTO;
+import by.poskrobko.model.Role;
 import by.poskrobko.service.ScheduleService;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -14,7 +17,8 @@ public class ScheduleController extends BaseController {
     private final ScheduleService scheduleService = new ScheduleService();
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
+        super.handle(exchange);
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 
@@ -23,7 +27,15 @@ public class ScheduleController extends BaseController {
             switch (action) {
                 case GET_SCHEDULE -> {
                     System.out.println("Get schedule: " + action);
-                    List<ScheduleDTO> scheduleDTOs = scheduleService.findAll();
+                    UserDTO userDTO = SessionStorage.getUser(getCookie());
+                    List<ScheduleDTO> scheduleDTOs;
+                    if (userDTO != null && userDTO.roles().contains(Role.TEACHER)) {
+                        scheduleDTOs = scheduleService.findByTeacher(userDTO.id());
+                    } else if (userDTO != null && userDTO.roles().contains(Role.STUDENT)) {
+                        scheduleDTOs = scheduleService.findByStudent(userDTO.id());
+                    } else {
+                        scheduleDTOs = scheduleService.findAll();
+                    }
                     sendJson(exchange, 200, scheduleDTOs);
                 }
                 case POST_SCHEDULE -> {

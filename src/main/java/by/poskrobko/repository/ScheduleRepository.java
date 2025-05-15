@@ -12,6 +12,10 @@ public interface ScheduleRepository {
 
     List<Schedule> findAllByGroup(Group group);
 
+    List<ScheduleDTO> findAllByTeacher(String teacherId);
+
+    List<ScheduleDTO> findAllByStudent(String userId);
+
     List<ScheduleDTO> findAll();
 
     ScheduleDTO findById(String id);
