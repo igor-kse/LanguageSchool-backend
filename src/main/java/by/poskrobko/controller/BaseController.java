@@ -1,5 +1,8 @@
 package by.poskrobko.controller;
 
+import by.poskrobko.SessionStorage;
+import by.poskrobko.dto.UserDTO;
+import by.poskrobko.model.Role;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
 
 public abstract class BaseController implements HttpHandler {
 
@@ -34,12 +36,23 @@ public abstract class BaseController implements HttpHandler {
             var cookies = exchange.getRequestHeaders().get("SESSIONID");
             cookie = cookies != null && !cookies.isEmpty() ? cookies.getFirst() : "";
             System.out.println("Request id: " + cookie);
+
+            UserDTO user = SessionStorage.getUser(cookie);
+            boolean isAdmin = user != null && user.roles().contains(Role.ADMIN);
+            boolean isGet = "GET".equalsIgnoreCase(exchange.getRequestMethod());
+            if (!isGet && !isAdmin) {
+                exchange.setAttribute("forbidden", true);
+                sendJson(exchange, 403, Collections.singletonMap("error", "Forbidden"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     protected void handleRequest(HttpExchange exchange, HttpExchangeProcessable processor) {
+        if (Boolean.TRUE.equals(exchange.getAttribute("forbidden"))) {
+            return;
+        }
         try {
             processor.process();
         } catch (ExistingEntityException | NotExistingEntityException e) {

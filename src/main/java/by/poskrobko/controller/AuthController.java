@@ -18,7 +18,6 @@ public class AuthController extends BaseController {
 
     @Override
     public void handle(HttpExchange exchange) {
-        super.handle(exchange);
         handleRequest(exchange, () -> {
             String path = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod();
