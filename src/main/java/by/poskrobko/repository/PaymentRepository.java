@@ -14,7 +14,9 @@ public interface PaymentRepository {
 
     PaymentDTO findById(String id);
 
-    List<Payment> findAllByUser(User user);
+    List<PaymentDTO> findAllByStudent(String studentId);
+
+    List<PaymentDTO> findAllByTeacherStudents(String teacherId);
 
     List<Payment> findAllByDate(LocalDate localDate);
 

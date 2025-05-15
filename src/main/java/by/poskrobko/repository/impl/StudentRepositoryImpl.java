@@ -73,4 +73,22 @@ public class StudentRepositoryImpl extends AbstractBaseDAO<Student> implements S
             return mapper.toStudents(statement.executeQuery());
         });
     }
+
+    @Override
+    public Student findById(String id) {
+        return sqlExecutor.execute(connection -> {
+            String sql =
+                    """
+                    SELECT
+                        st.student_id, age, hobbies, channel, note,
+                        firstname, lastname, email, avatar
+                        FROM students st
+                        LEFT JOIN users u ON st.student_id = u.user_id
+                    WHERE user_id = ?
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, id);
+            return mapper.toStudent(statement.executeQuery());
+        });
+    }
 }

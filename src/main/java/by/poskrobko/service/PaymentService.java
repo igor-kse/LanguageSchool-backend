@@ -54,13 +54,13 @@ public class PaymentService {
         return paymentRepository.findById(id);
     }
 
-    public List<Payment> getPaymentsByUser(String userId) {
-        Objects.requireNonNull(userId, "userId cannot be null");
+    public List<PaymentDTO> getAllByTeacherStudents(String teacherId) {
+        Objects.requireNonNull(teacherId);
+        return paymentRepository.findAllByTeacherStudents(teacherId);
+    }
 
-        User user = userRepository.findById(userId);
-        Objects.requireNonNull(user, "User " + userId + " not found");
-
-        paymentRepository.findAllByUser(user);
-        return null;
+    public List<PaymentDTO> getPaymentsByUser(String studentId) {
+        Objects.requireNonNull(studentId, "studentId cannot be null");
+        return paymentRepository.findAllByStudent(studentId);
     }
 }

@@ -1,7 +1,9 @@
 package by.poskrobko.controller;
 
+import by.poskrobko.SessionStorage;
 import by.poskrobko.dto.GroupDTO;
-import by.poskrobko.dto.StudentDTO;
+import by.poskrobko.dto.UserDTO;
+import by.poskrobko.model.Role;
 import by.poskrobko.service.GroupService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sun.net.httpserver.HttpExchange;
@@ -20,8 +22,10 @@ public class GroupController extends BaseController {
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 
+        super.handle(exchange);
         handleRequest(exchange, () -> {
             GroupAction action = GroupAction.resolve(path, BaseController.HttpMethod.valueOf(method));
+            UserDTO userDTO = SessionStorage.getUser(getCookie());
             switch (action) {
                 case GET_GROUP_BY_ID -> {
                     System.out.println("Get group by id: " + action);
@@ -32,7 +36,14 @@ public class GroupController extends BaseController {
                 }
                 case GET_ALL_GROUPS -> {
                     System.out.println("Get all groups: " + action);
-                    List<GroupDTO> groups = groupService.findAll();
+                    List<GroupDTO> groups;
+                    if (userDTO != null && userDTO.roles().contains(Role.TEACHER)) {
+                        groups = groupService.findAllByTeacher(userDTO.id());
+                    } else if (userDTO != null && userDTO.roles().contains(Role.STUDENT)) {
+                        groups = groupService.findAllByStudent(userDTO.id());
+                    } else {
+                        groups = groupService.findAll();
+                    }
                     sendJson(exchange, 200, groups);
                 }
                 case POST_REGISTER_GROUP -> {

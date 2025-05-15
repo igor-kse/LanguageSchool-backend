@@ -21,5 +21,5 @@ public interface GroupRepository {
 
     List<Group> findAllByTeacher(String id);
 
-    List<Group> findAllByUser(String userId);
+    List<Group> findAllByStudent(String userId);
 }

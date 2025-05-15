@@ -6,6 +6,7 @@ import by.poskrobko.repository.AbstractBaseDAO;
 import by.poskrobko.repository.GroupRepository;
 import by.poskrobko.util.Settable;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements GroupRepository {
@@ -47,30 +48,37 @@ public class GroupRepositoryImpl extends AbstractBaseDAO<Group> implements Group
     public List<Group> findAllByTeacher(String id) {
         return doFindAllBy(
                 """
-                        SELECT groups.*, languages.*, teachers.education, users.user_id, users.firstName, users.lastName, users.email
-                            FROM groups
-                                INNER JOIN grades ON groups.grade_id = grades.grade_id
-                                INNER JOIN languages ON grades.language_name = languages.language_name
-                                INNER JOIN teachers ON groups.teacher_id = teachers.teacher_id
-                                INNER JOIN users ON teachers.teacher_id = users.user_id
-                        WHERE teacher_id = ?
-                        """,
+                SELECT g.group_id, g.name, g.teacher_id, g.language_name, g.scale_level_id,
+                       t.education, u.firstname, u.lastname, u.email, u.password,
+                       sl.language_scale_name, sl.scale_level_name, sl.scale_level_id,
+                       ls.language_scale_description
+                    FROM groups g
+                        INNER JOIN teachers t ON g.teacher_id = t.teacher_id
+                        INNER JOIN users u ON t.teacher_id = u.user_id
+                        INNER JOIN scale_levels sl ON g.scale_level_id = sl.scale_level_id
+                        INNER JOIN language_scales ls ON sl.language_scale_name = ls.language_scale_name
+                    WHERE g.teacher_id = ?
+                """,
                 statement -> statement.setString(1, id),
                 groupMapper::toGroup);
     }
 
     @Override
-    public List<Group> findAllByUser(String userId) {
+    public List<Group> findAllByStudent(String userId) {
         return doFindAllBy(
                 """
-                        SELECT groups.*, languages.*, teachers.education, users.user_id, users.firstName, users.lastName, users.email
-                                    FROM groups
-                                        INNER JOIN grades ON groups.grade_id = grades.grade_id
-                                        INNER JOIN languages ON grades.language_name = languages.language_name
-                                        INNER JOIN teachers ON groups.teacher_id = teachers.teacher_id
-                                        INNER JOIN users ON teachers.teacher_id = users.user_id
-                                WHERE users.user_id = ?
-                        """,
+                    SELECT g.group_id, g.name, g.teacher_id, g.language_name, g.scale_level_id,
+                       t.education, u.firstname, u.lastname, u.email, u.password,
+                       sl.language_scale_name, sl.scale_level_name, sl.scale_level_id,
+                       ls.language_scale_description
+                    FROM groups g
+                        INNER JOIN teachers t ON g.teacher_id = t.teacher_id
+                        INNER JOIN users u ON t.teacher_id = u.user_id
+                        INNER JOIN scale_levels sl ON g.scale_level_id = sl.scale_level_id
+                        INNER JOIN language_scales ls ON sl.language_scale_name = ls.language_scale_name
+                        INNER JOIN student_group stg ON g.group_id = stg.group_id
+                    WHERE stg.student_id = ?
+                    """,
                 statement -> statement.setString(1, userId),
                 groupMapper::toGroup);
     }

@@ -11,6 +11,8 @@ public interface StudentRepository {
 
     void delete(String id);
 
+    Student findById(String id);
+
     List<Student> getAllStudents();
 
     List<Student> getAllStudents(String groupId);

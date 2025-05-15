@@ -1,12 +1,12 @@
 package by.poskrobko.controller;
 
+import by.poskrobko.SessionStorage;
 import by.poskrobko.dto.PaymentDTO;
 import by.poskrobko.dto.UserDTO;
-import by.poskrobko.dto.UserToRegisterDTO;
+import by.poskrobko.model.Role;
 import by.poskrobko.service.PaymentService;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,10 +22,18 @@ public class PaymentController extends BaseController {
 
         handleRequest(exchange, () -> {
             PaymentAction action = PaymentAction.resolve(path, HttpMethod.valueOf(method));
+            UserDTO userDTO = SessionStorage.getUser(getCookie());
             switch (action) {
                 case GET_ALL_PAYMENTS -> {
                     System.out.println("Get all payments: " + action);
-                    List<PaymentDTO> payments = paymentService.getAll();
+                    List<PaymentDTO> payments;
+                    if (userDTO != null && userDTO.roles().contains(Role.TEACHER)) {
+                        payments = paymentService.getAllByTeacherStudents(userDTO.id());
+                    } else if (userDTO != null && userDTO.roles().contains(Role.STUDENT)) {
+                        payments = paymentService.getPaymentsByUser(userDTO.id());
+                    } else {
+                        payments = paymentService.getAll();;
+                    }
                     sendJson(exchange, 200, payments);
                 }
                 case POST_REGISTER_PAYMENT -> {

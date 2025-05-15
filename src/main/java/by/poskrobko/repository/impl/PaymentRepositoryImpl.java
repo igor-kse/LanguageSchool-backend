@@ -58,10 +58,38 @@ public class PaymentRepositoryImpl extends AbstractBaseDAO<Payment> implements P
     }
 
     @Override
-    public List<Payment> findAllByUser(User user) {
-        return doFindAllBy("SELECT payment_id, user_id, amount, date, description FROM payments WHERE user_id = ?",
-                statement -> statement.setString(1, user.getUserId()),
-                resultSet -> paymentMapper.toPayment(resultSet, user));
+    public List<PaymentDTO> findAllByStudent(String studentId) {
+        return sqlExecutor.execute(connection -> {
+            String sql = """
+                    SELECT payment_id, date, amount, date, description, u.firstname, u.lastname
+                    FROM payments
+                        INNER JOIN users u ON payments.user_id = u.user_id
+                    WHERE u.user_id = ?
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, studentId);
+            ResultSet rs = statement.executeQuery();
+            return paymentMapper.toPaymentDTOs(rs);
+        });
+    }
+
+    @Override
+    public List<PaymentDTO> findAllByTeacherStudents(String teacherId) {
+        return sqlExecutor.execute(connection -> {
+            String sql = """
+                    SELECT payment_id, date, amount, date, description, u.firstname, u.lastname
+                    FROM payments p
+                        INNER JOIN users u ON p.user_id = u.user_id
+                        INNER JOIN student_group sg ON p.user_id = sg.student_id
+                        INNER JOIN groups g ON sg.group_id = g.group_id
+                    WHERE g.teacher_id = ?
+                    GROUP BY payment_id, date, amount, date, description, u.firstname, u.lastname
+                    """;
+            var statement = connection.prepareStatement(sql);
+            statement.setString(1, teacherId);
+            ResultSet rs = statement.executeQuery();
+            return paymentMapper.toPaymentDTOs(rs);
+        });
     }
 
     @Override

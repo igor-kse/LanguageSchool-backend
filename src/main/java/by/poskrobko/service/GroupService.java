@@ -39,24 +39,19 @@ public class GroupService {
         return groupMapper.toGroupDTO(groupRepository.findById(id));
     }
 
-    public List<Group> findAllByTeacher(String id) {
+    public List<GroupDTO> findAllByTeacher(String id) {
         Util.assureStringHasLength(id, "Teacher id");
-        return groupRepository.findAllByTeacher(id);
+        return groupMapper.toGroupDTOs(groupRepository.findAllByTeacher(id));
     }
 
-    public List<Group> findAllByUser(String id) {
+    public List<GroupDTO> findAllByStudent(String id) {
         Objects.requireNonNull(id, "id cannot be null");
-//        List<StudentGroupDAOImpl.StudentGroup> studentGroups = studentGroupDAO.findAllByUserId(id);
-        return null;
+        return groupMapper.toGroupDTOs(groupRepository.findAllByStudent(id));
     }
 
     public List<GroupDTO> findAll() {
         List<Group> groups = groupRepository.findAll();
         return groupMapper.toGroupDTOs(groups);
-    }
-
-    public List<Group> getAllGroups() {
-        return groupRepository.findAll();
     }
 
     public void update(GroupDTO group) {

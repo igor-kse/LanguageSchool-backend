@@ -5,6 +5,7 @@ import by.poskrobko.dto.UserToRegisterDTO;
 import by.poskrobko.dto.UserToUpdateDTO;
 import by.poskrobko.mapper.UserMapper;
 import by.poskrobko.model.Role;
+import by.poskrobko.model.Student;
 import by.poskrobko.model.Teacher;
 import by.poskrobko.model.User;
 import by.poskrobko.repository.StudentRepository;
@@ -40,6 +41,9 @@ public class UserService {
 
         if (user.getRoles().contains(Role.TEACHER) && teacherRepository.findById(user.getUserId()) == null) {
             teacherRepository.save(new Teacher(user, "", Collections.emptySet()));
+        }
+        if (user.getRoles().contains(Role.STUDENT) && studentRepository.findById(user.getUserId()) == null) {
+            studentRepository.save(new Student(0, "", "", "", user));
         }
         return userMapper.toUserDTO(user);
     }
@@ -87,8 +91,8 @@ public class UserService {
     }
 
     public void delete(String id) {
-        userRepository.delete(id);
         studentRepository.delete(id);
         teacherRepository.delete(id);
+        userRepository.delete(id);
     }
 }
