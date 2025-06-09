@@ -1,13 +1,15 @@
 package by.poskrobko.repository.impl;
 
 import by.poskrobko.dto.ScheduleDTO;
-import by.poskrobko.dto.ScheduleToPost;
+import by.poskrobko.dto.ScheduleToPostDTO;
 import by.poskrobko.mapper.ScheduleMapper;
 import by.poskrobko.model.Group;
 import by.poskrobko.model.Schedule;
 import by.poskrobko.repository.AbstractBaseDAO;
 import by.poskrobko.repository.ScheduleRepository;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 public class ScheduleRepositoryImpl extends AbstractBaseDAO<Schedule> implements ScheduleRepository {
@@ -15,14 +17,14 @@ public class ScheduleRepositoryImpl extends AbstractBaseDAO<Schedule> implements
     private final ScheduleMapper scheduleMapper = new ScheduleMapper();
 
     @Override
-    public void save(String id, ScheduleToPost schedule) {
+    public void save(String id, String groupId, String dayOfWeek, String startTime, String endTime) {
         doSave("INSERT INTO schedule VALUES(?, ?, ?, ?, ?)",
                 statement -> {
                     statement.setString(1, id);
-                    statement.setString(2, schedule.groupId());
-                    statement.setString(3, schedule.dayOfWeek());
-                    statement.setString(4, schedule.startTime());
-                    statement.setString(5, schedule.endTime());
+                    statement.setString(2, groupId);
+                    statement.setString(3, dayOfWeek);
+                    statement.setString(4, startTime);
+                    statement.setString(5, endTime);
                 });
     }
 
@@ -114,7 +116,7 @@ public class ScheduleRepositoryImpl extends AbstractBaseDAO<Schedule> implements
     }
 
     @Override
-    public void update(ScheduleToPost schedule) {
+    public void update(ScheduleToPostDTO schedule) {
         doUpdate("UPDATE schedule SET group_id = ?, dayOfWeek = ?, startTime = ?, endTime = ? WHERE schedule_id = ?",
                 statement -> {
                     statement.setString(1, schedule.groupId());

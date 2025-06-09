@@ -1,14 +1,16 @@
 package by.poskrobko.repository;
 
 import by.poskrobko.dto.ScheduleDTO;
-import by.poskrobko.dto.ScheduleToPost;
+import by.poskrobko.dto.ScheduleToPostDTO;
 import by.poskrobko.model.Group;
 import by.poskrobko.model.Schedule;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ScheduleRepository {
-    void save(String id, ScheduleToPost schedule);
+    void save(String id, String groupId, String dayOfWeek, String startTime, String endTime);
 
     List<Schedule> findAllByGroup(Group group);
 
@@ -22,5 +24,5 @@ public interface ScheduleRepository {
 
     void delete(String id);
 
-    void update(ScheduleToPost schedule);
+    void update(ScheduleToPostDTO schedule);
 }

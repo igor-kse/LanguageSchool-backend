@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static by.poskrobko.TestData.*;
 
@@ -30,7 +31,7 @@ class TeacherRepositoryTest {
 
     @Test
     public void save() {
-        Teacher teacher = new Teacher(USER_4, "University of Cambridge");
+        Teacher teacher = new Teacher(USER_4, "University of Cambridge", Set.of("English"));
         teacherRepository.save(teacher);
         Assertions.assertEquals(teacher, teacherRepository.findById(teacher.getId()));
     }

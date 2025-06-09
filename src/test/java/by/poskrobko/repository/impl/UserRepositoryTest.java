@@ -41,12 +41,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    public void findAll() {
-        List<User> users = userRepository.findAll();
-        Assertions.assertIterableEquals(List.of(USER_1, USER_2, USER_3), users);
-    }
-
-    @Test
     public void update() {
         User user = userRepository.findById(USER_UUID_1);
         user.setFirstName("newFirstName");

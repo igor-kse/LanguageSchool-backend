@@ -1,7 +1,6 @@
 package by.poskrobko;
 
 import by.poskrobko.model.*;
-import by.poskrobko.repository.impl.StudentGradeDAOImpl.StudentGrade;
 import by.poskrobko.repository.impl.StudentGroupDAOImpl.StudentGroup;
 
 import java.time.DayOfWeek;
@@ -16,16 +15,6 @@ public class TestData {
     public static final Language ITALIAN = new Language("Italian", "", "");
     public static final Language FRENCH = new Language("French", "", "");
 
-    public static final String GRADE_UUID_ENGLISH_A1 = "grade_uuid1";
-    public static final String GRADE_UUID_ENGLISH_A2 = "grade_uuid2";
-    public static final String GRADE_UUID_ENGLISH_B1 = "grade_uuid3";
-    public static final String GRADE_UUID_ENGLISH_B2 = "grade_uuid4";
-
-    public static final Grade GRADE_ENGLISH_A1 = new Grade(GRADE_UUID_ENGLISH_A1, ENGLISH, CEFRLevel.A1);
-    public static final Grade GRADE_ENGLISH_A2 = new Grade(GRADE_UUID_ENGLISH_A2, ENGLISH, CEFRLevel.A2);
-    public static final Grade GRADE_ENGLISH_B1 = new Grade(GRADE_UUID_ENGLISH_B1, ENGLISH, CEFRLevel.B1);
-    public static final Grade GRADE_ENGLISH_B2 = new Grade(GRADE_UUID_ENGLISH_B2, ENGLISH, CEFRLevel.B2);
-
     public static final String USER_UUID_1 = "user_uuid_1";
     public static final String USER_UUID_2 = "user_uuid_2";
     public static final String USER_UUID_3 = "user_uuid_3";
@@ -35,13 +24,11 @@ public class TestData {
     public static final User USER_3 = new User(USER_UUID_3, "name3", "surname3", "email3@email.com", "password3", Set.of(Role.STUDENT), null);
     public static final User USER_4 = new User(USER_UUID_4, "name4", "surname4", "email4@email.com", "password4", Set.of(Role.STUDENT), null);
 
-    public static final Teacher TEACHER = new Teacher(USER_2, "UofT", Set.of("English"));
+    public static final Student STUDENT_3 = new Student(20, "telegram", "music", "", USER_3);
+    public static final Student STUDENT_4 = new Student(22, "telegram", "books", "", USER_4);
+    public static final Student STUDENT_1 = new Student(18, "telegram", "games", "", USER_1);
 
-    public static final StudentGrade USER_1_ENGLISH_A1 = new StudentGrade(USER_UUID_1, GRADE_UUID_ENGLISH_A1);
-    public static final StudentGrade USER_1_ENGLISH_B2 = new StudentGrade(USER_UUID_1, GRADE_UUID_ENGLISH_B2);
-    public static final StudentGrade USER_2_ENGLISH_A2 = new StudentGrade(USER_UUID_2, GRADE_UUID_ENGLISH_A2);
-    public static final StudentGrade USER_3_ENGLISH_B1 = new StudentGrade(USER_UUID_3, GRADE_UUID_ENGLISH_B1);
-    public static final StudentGrade USER_3_ENGLISH_B2 = new StudentGrade(USER_UUID_3, GRADE_UUID_ENGLISH_B2);
+    public static final Teacher TEACHER = new Teacher(USER_2, "UofT", Set.of("English"));
 
     public static final String GROUP_UUID_1 = "group_uuid_1";
     public static final String GROUP_UUID_2 = "group_uuid_2";

@@ -1,7 +1,7 @@
 package by.poskrobko.service;
 
 import by.poskrobko.dto.ScheduleDTO;
-import by.poskrobko.dto.ScheduleToPost;
+import by.poskrobko.dto.ScheduleToPostDTO;
 import by.poskrobko.repository.ScheduleRepository;
 import by.poskrobko.repository.impl.ScheduleRepositoryImpl;
 
@@ -24,14 +24,14 @@ public class ScheduleService {
         return scheduleRepository.findAllByStudent(studentId);
     }
 
-    public ScheduleDTO create(ScheduleToPost dto) {
+    public ScheduleDTO create(ScheduleToPostDTO dto) {
         Objects.requireNonNull(dto);
         String id = UUID.randomUUID().toString();
-        scheduleRepository.save(id, dto);
+        scheduleRepository.save(id, dto.groupId(), dto.dayOfWeek(), dto.startTime(), dto.endTime());
         return scheduleRepository.findById(id);
     }
 
-    public void update(ScheduleToPost dto) {
+    public void update(ScheduleToPostDTO dto) {
         Objects.requireNonNull(dto);
         scheduleRepository.update(dto);
     }

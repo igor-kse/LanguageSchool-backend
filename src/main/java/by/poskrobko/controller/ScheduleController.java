@@ -2,13 +2,12 @@ package by.poskrobko.controller;
 
 import by.poskrobko.SessionStorage;
 import by.poskrobko.dto.ScheduleDTO;
-import by.poskrobko.dto.ScheduleToPost;
+import by.poskrobko.dto.ScheduleToPostDTO;
 import by.poskrobko.dto.UserDTO;
 import by.poskrobko.model.Role;
 import by.poskrobko.service.ScheduleService;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -40,14 +39,14 @@ public class ScheduleController extends BaseController {
                 }
                 case POST_SCHEDULE -> {
                     System.out.println("Post schedule: " + action);
-                    ScheduleToPost scheduleDTO = jsonMapper.readValue(exchange.getRequestBody(), ScheduleToPost.class);
+                    ScheduleToPostDTO scheduleDTO = jsonMapper.readValue(exchange.getRequestBody(), ScheduleToPostDTO.class);
                     System.out.println(scheduleDTO.toString());
                     ScheduleDTO postedSchedule = scheduleService.create(scheduleDTO);
                     sendJson(exchange, 201, postedSchedule);
                 }
                 case PUT_SCHEDULE -> {
                     System.out.println("Put update schedule: " + action);
-                    ScheduleToPost scheduleDTO = jsonMapper.readValue(exchange.getRequestBody(), ScheduleToPost.class);
+                    ScheduleToPostDTO scheduleDTO = jsonMapper.readValue(exchange.getRequestBody(), ScheduleToPostDTO.class);
                     scheduleService.update(scheduleDTO);
                     sendNoContent(exchange);
                 }

@@ -3,11 +3,9 @@ package by.poskrobko.service;
 import by.poskrobko.dto.GroupDTO;
 import by.poskrobko.mapper.GroupMapper;
 import by.poskrobko.model.Group;
-import by.poskrobko.repository.GradeRepository;
 import by.poskrobko.repository.GroupRepository;
 import by.poskrobko.repository.StudentGroupDAO;
 import by.poskrobko.repository.TeacherRepository;
-import by.poskrobko.repository.impl.GradeRepositoryImpl;
 import by.poskrobko.repository.impl.GroupRepositoryImpl;
 import by.poskrobko.repository.impl.StudentGroupDAOImpl;
 import by.poskrobko.repository.impl.TeacherRepositoryImpl;
@@ -21,10 +19,6 @@ import java.util.UUID;
 public class GroupService {
 
     private final GroupRepository groupRepository = new GroupRepositoryImpl();
-    private final StudentGroupDAO studentGroupDAO = new StudentGroupDAOImpl();
-    private final GradeRepository gradeRepository = new GradeRepositoryImpl();
-    private final TeacherRepository teacherRepository = new TeacherRepositoryImpl();
-
     private final GroupMapper groupMapper = new GroupMapper();
 
     public GroupDTO create(GroupDTO group) {

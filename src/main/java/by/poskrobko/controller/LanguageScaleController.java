@@ -25,7 +25,7 @@ public class LanguageScaleController extends BaseController {
             switch (action) {
                 case GET_SCALE_BY_NAME -> {
                     System.out.println("Get language scale by name: " + action);
-                    String name = path.substring("/scales/".length());
+                    String name = URLDecoder.decode(path.substring("/scales/".length()), StandardCharsets.UTF_8);
                     ScaleDTO dto = languageScaleService.findByName(name);
                     sendJson(exchange, 200, dto);
                 }
@@ -49,7 +49,7 @@ public class LanguageScaleController extends BaseController {
                 }
                 case DELETE_SCALE -> {
                     System.out.println("Delete language scale: " + action);
-                    String name = path.substring("/scales/".length());
+                    String name = URLDecoder.decode(path.substring("/scales/".length()), StandardCharsets.UTF_8);
                     languageScaleService.delete(name);
                     sendNoContent(exchange);
                 }
@@ -58,11 +58,11 @@ public class LanguageScaleController extends BaseController {
     }
 
     private enum LanguageScaleAction {
-        GET_SCALE_BY_NAME(Pattern.compile("/scales/[\\wа-яА-ЯёЁ-]+"), HttpMethod.GET),
+        GET_SCALE_BY_NAME(Pattern.compile("/scales/[^/]+"), HttpMethod.GET),
         GET_ALL_SCALES(Pattern.compile("/scales"), HttpMethod.GET),
         POST_ADD_NEW_SCALE(Pattern.compile("/scales"), HttpMethod.POST),
         PUT_UPDATE_SCALE(Pattern.compile("/scales/[^/]+"), HttpMethod.PUT),
-        DELETE_SCALE(Pattern.compile("/scales/[\\wа-яА-ЯёЁ-]+"), HttpMethod.DELETE),
+        DELETE_SCALE(Pattern.compile("/scales/[^/]+"), HttpMethod.DELETE),
 
         DEFAULT(Pattern.compile(""), HttpMethod.DEFAULT);
 
