@@ -15,7 +15,10 @@ public class UserController extends BaseController {
 
     @Override
     public void handle(HttpExchange exchange) {
-        super.handle(exchange);
+
+        if (!isActionAllowed(exchange)) {
+            return;
+        }
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 

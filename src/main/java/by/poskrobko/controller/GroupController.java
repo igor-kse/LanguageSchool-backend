@@ -18,11 +18,13 @@ public class GroupController extends BaseController {
 
     @Override
     public void handle(HttpExchange exchange) {
-        super.handle(exchange);
+        if (!isActionAllowed(exchange)) {
+            return;
+        }
+
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 
-        super.handle(exchange);
         handleRequest(exchange, () -> {
             GroupAction action = GroupAction.resolve(path, BaseController.HttpMethod.valueOf(method));
             UserDTO userDTO = SessionStorage.getUser(getCookie());

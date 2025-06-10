@@ -4,7 +4,6 @@ import by.poskrobko.dto.TeacherDTO;
 import by.poskrobko.service.TeacherService;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -14,7 +13,10 @@ public class TeacherController extends BaseController{
 
     @Override
     public void handle(HttpExchange exchange) {
-        super.handle(exchange);
+
+        if (!isActionAllowed(exchange)) {
+            return;
+        }
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 

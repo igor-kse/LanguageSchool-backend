@@ -30,8 +30,8 @@ public abstract class BaseController implements HttpHandler {
 
     private String cookie = "";
 
-    @Override
-    public void handle(HttpExchange exchange) {
+
+    public boolean isActionAllowed(HttpExchange exchange) {
         try {
             var cookies = exchange.getRequestHeaders().get("SESSIONID");
             cookie = cookies != null && !cookies.isEmpty() ? cookies.getFirst() : "";
@@ -43,10 +43,12 @@ public abstract class BaseController implements HttpHandler {
             if (!isGet && !isAdmin) {
                 exchange.setAttribute("forbidden", true);
                 sendJson(exchange, 403, Collections.singletonMap("error", "Forbidden"));
+                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     protected void handleRequest(HttpExchange exchange, HttpExchangeProcessable processor) {

@@ -5,7 +5,6 @@ import by.poskrobko.dto.LanguageEntryDTO;
 import by.poskrobko.service.LanguageService;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -15,7 +14,11 @@ public class LanguageController extends BaseController {
 
     @Override
     public void handle(HttpExchange exchange) {
-        super.handle(exchange);
+
+        if (!isActionAllowed(exchange)) {
+            return;
+        }
+
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
 
